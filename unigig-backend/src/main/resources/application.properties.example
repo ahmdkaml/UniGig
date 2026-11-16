@@ -1,0 +1,16 @@
+spring.application.name=unigig-backend
+
+# PostgreSQL (matches docker-compose.yml local defaults)
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/unigig}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:postgres}
+
+# JPA & Flyway (Flyway owns all schema changes; Hibernate only validates)
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.open-in-view=false
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration
+
+# JWT Settings (used starting in UG-4)
+app.jwt.secret=${JWT_SECRET:replace-with-a-256-bit-base64-secret-key-for-local-dev}
+app.jwt.expiration-ms=${JWT_EXPIRATION_MS:86400000}
