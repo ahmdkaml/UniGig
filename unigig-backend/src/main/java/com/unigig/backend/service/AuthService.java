@@ -1,11 +1,14 @@
-
 package com.unigig.backend.service;
 
 import com.unigig.backend.dto.AuthResponse;
+import com.unigig.backend.dto.LoginRequest;
+import com.unigig.backend.dto.LoginResponse;
 import com.unigig.backend.dto.RegisterRequest;
 import com.unigig.backend.entity.User;
 import com.unigig.backend.repository.UserRepository;
+import com.unigig.backend.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -39,6 +43,28 @@ public class AuthService {
                 saved.getFullName(),
                 saved.getEmail(),
                 saved.getRole()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginRequest request) {
+        String normalizedEmail = request.email().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new BadCredentialsException("Invalid email or password");
+        }
+
+        String token = jwtService.generateToken(user);
+
+        return new LoginResponse(
+                token,
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole()
         );
     }
 }
