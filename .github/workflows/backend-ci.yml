@@ -1,0 +1,40 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  compile:
+    name: Maven Compile (Java 25)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+          cache-dependency-path: backend/pom.xml
+
+      - name: Ensure Maven Wrapper is executable
+        run: chmod +x mvnw
+
+      - name: Compile backend source and tests
+        run: ./mvnw test-compile --batch-mode --no-transfer-progress

@@ -1,0 +1,39 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'unigig-frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'unigig-frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+
+jobs:
+  build:
+    name: Angular Build (Node 24)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./unigig-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: unigig-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular production bundle
+        run: npx ng build --configuration production
