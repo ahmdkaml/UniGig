@@ -1,17 +1,20 @@
 package com.unigig.backend.exception;
 
-import com.unigig.backend.dto.ErrorResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.unigig.backend.dto.ErrorResponse;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -66,5 +69,17 @@ public class GlobalExceptionHandler {
                                 request.getRequestURI());
 
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        }
+
+        @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<ErrorResponse> handleBadCredentials(
+                BadCredentialsException ex,
+                HttpServletRequest request) {
+            ErrorResponse body = ErrorResponse.of(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    ex.getMessage(),
+                    request.getRequestURI());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
         }
 }
