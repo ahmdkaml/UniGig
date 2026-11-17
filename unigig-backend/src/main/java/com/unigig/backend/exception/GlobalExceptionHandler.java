@@ -80,4 +80,27 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
     }
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(
+            jakarta.persistence.EntityNotFoundException ex, HttpServletRequest request) {
+        log.warn("Entity not found on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request) {
+        log.warn("Access denied on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
 }
