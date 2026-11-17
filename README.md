@@ -55,7 +55,7 @@ cd unigig-backend
 ```bash
 cd unigig-frontend
 npm install
-ng serve
+npm start
 ```
 * **App URL:** `http://localhost:4200`
 * **Production Build:** `npx ng build --configuration production`
