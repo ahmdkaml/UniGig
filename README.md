@@ -87,3 +87,11 @@ ng serve
 ## Deployment Overview
 * **Frontend:** Static Angular SPA hosted on **GitHub Pages** from `main`.
 * **Backend & DB:** Containerized locally via Docker and exposed over HTTPS using a **Cloudflare Tunnel** URL configured in `unigig-frontend/src/environments/environment.prod.ts`.
+
+### DTO & Model Synchronization Policy
+
+The REST API boundary between `unigig-backend` (`com.unigig.backend.dto` and domain enums) and `unigig-frontend` (`src/app/core/models/`) enforces a **strict 1-to-1 contract**.
+
+- **Exact Structural Parity:** Every TypeScript interface or type in `core/models/*.models.ts` must mirror its corresponding backend Java DTO record or enum—matching exact `camelCase` property names, JSON-compatible types (`Long` → `number`, ISO timestamps → `string`), optionality, and uppercase enum string literals.
+- **No Unbacked Wire Fields:** Frontend model files represent pure HTTP wire contracts. Any UI-only or derived display state belongs in component state or view-models, never inside `core/models/`.
+- **Coordinated Changes:** Any modification to a backend DTO or a frontend model must update its counterpart before merging into `dev`.
