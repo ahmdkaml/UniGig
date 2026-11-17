@@ -2,6 +2,7 @@ package com.unigig.backend.security;
 
 import com.unigig.backend.entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,15 +42,16 @@ public class JwtService {
     public String extractEmail(String token) {
         return parseClaims(token).getSubject();
     }
-
-    public boolean isTokenValid(String token, String expectedEmail) {
-        Claims claims = parseClaims(token);
-        String subject = claims.getSubject();
-        Date expiration = claims.getExpiration();
-        return subject != null
-                && subject.equals(expectedEmail)
-                && expiration != null
-                && expiration.after(new Date());
+    
+    public boolean isTokenValid(String token) {
+        try {
+            Claims claims = parseClaims(token);
+            return claims.getSubject() != null
+                    && claims.getExpiration() != null
+                    && claims.getExpiration().after(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private Claims parseClaims(String token) {

@@ -17,6 +17,7 @@ import com.unigig.backend.entity.UserRole;
  * ============================================================================
  */
 public record AuthResponse(
+        String token,
         Long id,
         String fullName,
         String email,

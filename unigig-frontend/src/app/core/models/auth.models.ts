@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-export type UserRole = 'STUDENT' | 'CLIENT';
+export type UserRole = 'FREELANCER' | 'CLIENT';
 
 export interface RegisterRequest {
   fullName: string;
@@ -24,6 +24,7 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
+  token: string;
   id: number;
   fullName: string;
   email: string;
@@ -33,12 +34,4 @@ export interface AuthResponse {
 export interface LoginRequest {
   email: string;
   password: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  id: number;
-  fullName: string;
-  email: string;
-  role: UserRole;
 }

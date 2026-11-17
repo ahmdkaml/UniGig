@@ -3,6 +3,8 @@ package com.unigig.backend.exception;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,68 +20,64 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-        @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<ErrorResponse> handleValidation(
-                        MethodArgumentNotValidException ex,
-                        HttpServletRequest request) {
-                Map<String, String> fieldErrors = new LinkedHashMap<>();
-                for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-                        fieldErrors.putIfAbsent(fieldError.getField(), fieldError.getDefaultMessage());
-                }
-
-                ErrorResponse body = ErrorResponse.ofValidation(
-                                "Validation failed",
-                                request.getRequestURI(),
-                                fieldErrors);
-                return ResponseEntity.badRequest().body(body);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        log.warn("Validation failed on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            fieldErrors.putIfAbsent(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        @ExceptionHandler(NoResourceFoundException.class)
-        public ResponseEntity<ErrorResponse> handleNotFound(
-                        NoResourceFoundException ex,
-                        HttpServletRequest request) {
-                ErrorResponse body = ErrorResponse.of(
-                                HttpStatus.NOT_FOUND.value(),
-                                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                                "Resource not found",
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-        }
+        ErrorResponse body = ErrorResponse.ofValidation(
+                "Validation failed",
+                request.getRequestURI(),
+                fieldErrors);
+        return ResponseEntity.badRequest().body(body);
+    }
 
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<ErrorResponse> handleUnexpected(
-                        Exception ex,
-                        HttpServletRequest request) {
-                ErrorResponse body = ErrorResponse.of(
-                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                                "An unexpected error occurred",
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
-        }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NoResourceFoundException ex, HttpServletRequest request) {
+        log.warn("Resource not found on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                "Resource not found",
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
 
-        @ExceptionHandler(IllegalStateException.class)
-        public ResponseEntity<ErrorResponse> handleConflict(IllegalStateException ex, HttpServletRequest request) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex, HttpServletRequest request) {
+        log.error("Unhandled exception on {} {}", request.getMethod(), request.getRequestURI(), ex);
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                "An unexpected error occurred",
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
 
-                ErrorResponse body = ErrorResponse.of(
-                                HttpStatus.CONFLICT.value(),
-                                HttpStatus.CONFLICT.getReasonPhrase(),
-                                "An unexpected error occurred",
-                                request.getRequestURI());
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(IllegalStateException ex, HttpServletRequest request) {
+        log.warn("Conflict on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
 
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
-        }
-
-        @ExceptionHandler(BadCredentialsException.class)
-        public ResponseEntity<ErrorResponse> handleBadCredentials(
-                BadCredentialsException ex,
-                HttpServletRequest request) {
-            ErrorResponse body = ErrorResponse.of(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                    ex.getMessage(),
-                    request.getRequestURI());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
-        }
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+        log.warn("Unauthorized attempt on {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
 }

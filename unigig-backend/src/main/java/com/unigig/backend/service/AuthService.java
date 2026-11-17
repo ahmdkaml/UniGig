@@ -2,7 +2,6 @@ package com.unigig.backend.service;
 
 import com.unigig.backend.dto.AuthResponse;
 import com.unigig.backend.dto.LoginRequest;
-import com.unigig.backend.dto.LoginResponse;
 import com.unigig.backend.dto.RegisterRequest;
 import com.unigig.backend.entity.User;
 import com.unigig.backend.repository.UserRepository;
@@ -37,8 +36,10 @@ public class AuthService {
                 .build();
 
         User saved = userRepository.save(user);
+        String token = jwtService.generateToken(saved);
 
         return new AuthResponse(
+                token,
                 saved.getId(),
                 saved.getFullName(),
                 saved.getEmail(),
@@ -47,7 +48,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public LoginResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
         String normalizedEmail = request.email().trim().toLowerCase();
 
         User user = userRepository.findByEmail(normalizedEmail)
@@ -59,7 +60,7 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
-        return new LoginResponse(
+        return new AuthResponse(
                 token,
                 user.getId(),
                 user.getFullName(),
