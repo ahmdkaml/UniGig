@@ -1,0 +1,218 @@
+<div class="mx-auto mt-6 max-w-3xl">
+  @if (isLoading()) {
+    <div class="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+      Loading profile...
+    </div>
+  } @else {
+    @if (successMessage()) {
+      <div class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        {{ successMessage() }}
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (isEditing()) {
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <h1 class="text-xl font-bold text-slate-900">
+          {{ profile() ? 'Edit Freelancer Profile' : 'Create Freelancer Profile' }}
+        </h1>
+        <p class="mt-1 text-sm text-slate-500">
+          Showcase your headline, bio, technical skills, and portfolio to campus clients.
+        </p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-6 space-y-5">
+          <div>
+            <label for="title" class="block text-sm font-medium text-slate-700">
+              Professional Title <span class="text-red-600">*</span>
+            </label>
+            <input
+              id="title"
+              type="text"
+              formControlName="title"
+              placeholder="e.g., Full-Stack Web & Mobile Developer"
+              class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+            />
+            @if (form.controls.title.touched && form.controls.title.hasError('required')) {
+              <p class="mt-1 text-xs text-red-600">Title is required.</p>
+            }
+            @if (form.controls.title.hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">Title must not exceed 120 characters.</p>
+            }
+            @if (fieldErrors()['title']) {
+              <p class="mt-1 text-xs text-red-600">{{ fieldErrors()['title'] }}</p>
+            }
+          </div>
+
+          <div>
+            <label for="bio" class="block text-sm font-medium text-slate-700">Bio</label>
+            <textarea
+              id="bio"
+              rows="4"
+              formControlName="bio"
+              placeholder="Tell clients about your coursework, past projects, and availability..."
+              class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+            ></textarea>
+            @if (form.controls.bio.hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">Bio must not exceed 2000 characters.</p>
+            }
+            @if (fieldErrors()['bio']) {
+              <p class="mt-1 text-xs text-red-600">{{ fieldErrors()['bio'] }}</p>
+            }
+          </div>
+
+          <div>
+            <label for="skillInput" class="block text-sm font-medium text-slate-700">
+              Technical Skills ({{ skills().length }}/25)
+            </label>
+            <div class="mt-1 flex gap-2">
+              <input
+                id="skillInput"
+                type="text"
+                [value]="skillInput()"
+                (input)="skillInput.set($any($event.target).value)"
+                (keydown.enter)="addSkill($event)"
+                placeholder="Type a skill (e.g., Angular) and press Add"
+                class="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+              />
+              <button
+                type="button"
+                (click)="addSkill()"
+                [disabled]="!canAddSkill()"
+                class="rounded-md border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-200 disabled:opacity-50"
+              >
+                Add
+              </button>
+            </div>
+
+            @if (skills().length > 0) {
+              <div class="mt-3 flex flex-wrap gap-2">
+                @for (skill of skills(); track skill) {
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
+                    {{ skill }}
+                    <button
+                      type="button"
+                      (click)="removeSkill(skill)"
+                      aria-label="Remove skill"
+                      class="text-slate-500 hover:text-slate-900"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                }
+              </div>
+            }
+            @if (fieldErrors()['skills']) {
+              <p class="mt-1 text-xs text-red-600">{{ fieldErrors()['skills'] }}</p>
+            }
+          </div>
+
+          <div>
+            <label for="portfolioUrl" class="block text-sm font-medium text-slate-700">
+              Portfolio URL
+            </label>
+            <input
+              id="portfolioUrl"
+              type="url"
+              formControlName="portfolioUrl"
+              placeholder="https://github.com/username"
+              class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
+            />
+            @if (form.controls.portfolioUrl.touched && form.controls.portfolioUrl.hasError('pattern')) {
+              <p class="mt-1 text-xs text-red-600">Enter a valid URL starting with http:// or https://.</p>
+            }
+            @if (form.controls.portfolioUrl.hasError('maxlength')) {
+              <p class="mt-1 text-xs text-red-600">Portfolio URL must not exceed 255 characters.</p>
+            }
+            @if (fieldErrors()['portfolioUrl']) {
+              <p class="mt-1 text-xs text-red-600">{{ fieldErrors()['portfolioUrl'] }}</p>
+            }
+          </div>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button
+              type="submit"
+              [disabled]="form.invalid || isSaving()"
+              class="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+            >
+              {{ isSaving() ? 'Saving...' : 'Save Profile' }}
+            </button>
+
+            @if (profile()) {
+              <button
+                type="button"
+                (click)="cancelEdit()"
+                class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            }
+          </div>
+        </form>
+      </div>
+    } @else if (profile(); as p) {
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900">{{ p.fullName }}</h1>
+            <p class="mt-1 text-base font-medium text-slate-600">{{ p.title }}</p>
+          </div>
+
+          @if (isOwnProfile()) {
+            <button
+              type="button"
+              (click)="enableEdit()"
+              class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            >
+              Edit Profile
+            </button>
+          }
+        </div>
+
+        <div class="mt-5 space-y-6">
+          <div>
+            <h2 class="text-xs font-semibold tracking-wider text-slate-500 uppercase">About</h2>
+            <p class="mt-2 whitespace-pre-line text-sm text-slate-700">
+              {{ p.bio || 'No bio added yet.' }}
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Skills</h2>
+            @if (p.skills.length > 0) {
+              <div class="mt-2 flex flex-wrap gap-2">
+                @for (skill of p.skills; track skill) {
+                  <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-800">
+                    {{ skill }}
+                  </span>
+                }
+              </div>
+            } @else {
+              <p class="mt-2 text-sm text-slate-500">No skills listed yet.</p>
+            }
+          </div>
+
+          <div>
+            <h2 class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Portfolio</h2>
+            @if (p.portfolioUrl) {
+              <a
+                [href]="p.portfolioUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-2 inline-block text-sm font-medium text-slate-900 underline hover:text-slate-700"
+              >
+                {{ p.portfolioUrl }}
+              </a>
+            } @else {
+              <p class="mt-2 text-sm text-slate-500">No portfolio link provided.</p>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

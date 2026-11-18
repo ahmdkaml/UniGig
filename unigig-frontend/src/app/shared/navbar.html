@@ -6,6 +6,9 @@
 
     <div class="flex items-center gap-4 text-sm font-medium">
       @if (authService.isAuthenticated()) {
+        <a routerLink="/profile" class="text-slate-600 hover:text-slate-900">
+          My Profile
+        </a>
         <button
           type="button"
           (click)="onLogout()"
