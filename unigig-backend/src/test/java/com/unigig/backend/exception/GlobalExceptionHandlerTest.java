@@ -1,10 +1,11 @@
 package com.unigig.backend.exception;
 
-import com.unigig.backend.config.SecurityConfig;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -19,8 +20,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = GlobalExceptionHandlerTest.DummyController.class)
-@Import({GlobalExceptionHandler.class, SecurityConfig.class, GlobalExceptionHandlerTest.DummyController.class})
+@WebMvcTest(
+    controllers = GlobalExceptionHandlerTest.DummyController.class,
+    excludeAutoConfiguration = {
+        SecurityAutoConfiguration.class,
+        SecurityFilterAutoConfiguration.class
+    }
+)
+@Import({GlobalExceptionHandler.class, GlobalExceptionHandlerTest.DummyController.class})
 class GlobalExceptionHandlerTest {
 
     @Autowired
