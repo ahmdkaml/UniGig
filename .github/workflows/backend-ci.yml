@@ -37,4 +37,4 @@ jobs:
         run: chmod +x mvnw
 
       - name: Compile backend source and tests
-        run: ./mvnw test-compile --batch-mode --no-transfer-progress
+        run: ./mvnw test --batch-mode --no-transfer-progress
