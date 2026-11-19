@@ -1,13 +1,17 @@
 package com.unigig.backend.exception;
 
+import com.unigig.backend.security.JwtAuthenticationFilter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,9 +29,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     controllers = GlobalExceptionHandlerTest.DummyController.class,
     excludeAutoConfiguration = {
         SecurityAutoConfiguration.class,
+        UserDetailsServiceAutoConfiguration.class,
         SecurityFilterAutoConfiguration.class,
         ServletWebSecurityAutoConfiguration.class
-    }
+    },
+    excludeFilters = @ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        classes = JwtAuthenticationFilter.class
+    )
 )
 @Import({GlobalExceptionHandler.class, GlobalExceptionHandlerTest.DummyController.class})
 class GlobalExceptionHandlerTest {
