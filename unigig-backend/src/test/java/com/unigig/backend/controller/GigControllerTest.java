@@ -138,34 +138,6 @@ class GigControllerTest {
     }
 
     @Test
-    void postGig_missingBudget_returns400() throws Exception {
-        User client = createAndSaveUser("client@alexu.edu.eg", UserRole.CLIENT);
-        Category category = createAndSaveCategory();
-        expectPostRejectedWith400(jwtService.generateToken(client),
-                gigJson("Build a landing page", "Need a one-page site", category.getId(), null));
-    }
-
-    // ---------- budget must be greater than 0 (400) ----------
-
-    @Test
-    void postGig_budgetZero_returns400() throws Exception {
-        User client = createAndSaveUser("client@alexu.edu.eg", UserRole.CLIENT);
-        Category category = createAndSaveCategory();
-        expectPostRejectedWith400(jwtService.generateToken(client),
-                gigJson("Build a landing page", "Need a one-page site", category.getId(), "0"));
-    }
-
-    @Test
-    void postGig_negativeBudget_returns400() throws Exception {
-        User client = createAndSaveUser("client@alexu.edu.eg", UserRole.CLIENT);
-        Category category = createAndSaveCategory();
-        expectPostRejectedWith400(jwtService.generateToken(client),
-                gigJson("Build a landing page", "Need a one-page site", category.getId(), "-25"));
-    }
-
-    // ---------- invalid category (400) ----------
-
-    @Test
     void postGig_unknownCategory_returns400() throws Exception {
         User client = createAndSaveUser("client@alexu.edu.eg", UserRole.CLIENT);
         expectPostRejectedWith400(jwtService.generateToken(client),

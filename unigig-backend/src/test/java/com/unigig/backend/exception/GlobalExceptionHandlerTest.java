@@ -14,7 +14,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,12 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unigig.backend.config.SecurityConfig;
 import com.unigig.backend.repository.UserRepository;
 import com.unigig.backend.security.JwtService;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 
 @WebMvcTest(
     controllers = GlobalExceptionHandlerTest.DummyController.class,

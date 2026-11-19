@@ -8,7 +8,6 @@ CREATE TABLE gigs (
     id          BIGSERIAL PRIMARY KEY,
     title       VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    budget      NUMERIC(10, 2) NOT NULL CHECK (budget > 0),
     status      VARCHAR(20)    NOT NULL DEFAULT 'OPEN',
     client_id   BIGINT         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     category_id BIGINT         NOT NULL REFERENCES categories(id),

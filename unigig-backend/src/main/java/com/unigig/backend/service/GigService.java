@@ -42,7 +42,6 @@ public class GigService {
         Gig gig = Gig.builder()
                 .title(request.title().trim())
                 .description(request.description().trim())
-                .budget(request.budget())
                 .status(GigStatus.OPEN)
                 .client(client)
                 .category(category)

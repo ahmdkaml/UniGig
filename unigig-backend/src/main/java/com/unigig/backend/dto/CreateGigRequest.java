@@ -1,10 +1,23 @@
 package com.unigig.backend.dto;
 
-import java.math.BigDecimal;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+
+/**
+ * ============================================================================
+ * STRICT CONTRACT: BACKEND DTOs <-> FRONTEND MODELS
+ * ============================================================================
+ * Every Java DTO record and enum in `com.unigig.backend.dto` MUST strictly
+ * mirror its corresponding TypeScript interface/type in
+ * `unigig-frontend/src/app/core/models/*.models.ts`.
+ *
+ * - Field names (camelCase), nullability, and enum string constants MUST
+ *   match 1-to-1 with the frontend models.
+ * - Do NOT rename, add, or remove fields here without updating the matching
+ *   TypeScript model in `core/models/` before merging into `dev`.
+ * ============================================================================
+ */
 
 public record CreateGigRequest(
     @NotBlank(message = "Title is required")
@@ -14,10 +27,6 @@ public record CreateGigRequest(
         String description,
 
         @NotNull(message = "Category ID is required")
-        Long categoryId,
-
-        @NotNull(message = "Budget is required")
-        @Positive(message = "Budget must be greater than 0")
-        BigDecimal budget
+        Long categoryId
 ) {
 }
