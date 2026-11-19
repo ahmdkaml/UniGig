@@ -13,9 +13,24 @@ on:
       - '.github/workflows/backend-ci.yml'
 
 jobs:
-  compile:
-    name: Maven Compile (Java 25)
+  build-and-test:
+    name: Maven Build & Test (Java 25)
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: unigig
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     defaults:
       run:
@@ -36,5 +51,10 @@ jobs:
       - name: Ensure Maven Wrapper is executable
         run: chmod +x mvnw
 
-      - name: Compile backend source and tests
-        run: ./mvnw test-compile --batch-mode --no-transfer-progress
+      - name: Compile and run backend tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/unigig
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+          # Add any other env vars from your .env or application.yml below (e.g., JWT_SECRET)
+        run: ./mvnw test --batch-mode --no-transfer-progress
