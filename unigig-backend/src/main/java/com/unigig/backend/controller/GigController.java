@@ -1,11 +1,14 @@
 package com.unigig.backend.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.unigig.backend.dto.CreateGigRequest;
@@ -21,7 +24,16 @@ import lombok.RequiredArgsConstructor;
 public class GigController {
     private final GigService gigService;
 
-    @PostMapping 
+    @GetMapping
+    public ResponseEntity<Page<GigResponse>> searchOpenGigs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        return ResponseEntity.ok(gigService.searchOpenGigs(keyword, categoryId, page));
+    }
+
+    @PostMapping
     public ResponseEntity<GigResponse> createGig(
         @Valid @RequestBody CreateGigRequest request,
         Authentication authentication

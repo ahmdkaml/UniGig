@@ -1,5 +1,8 @@
 package com.unigig.backend.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -23,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class GigService {
+
+    private static final int PAGE_SIZE = 10;
 
     private final GigRepository gigRepository;
     private final CategoryRepository categoryRepository;
@@ -49,6 +54,17 @@ public class GigService {
 
         Gig savedGig = gigRepository.save(gig);
         return GigResponse.from(savedGig);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GigResponse> searchOpenGigs(String keyword, Long categoryId, int page) {
+        int safePage = Math.max(0, page);
+        String normalizedKeyword = (keyword == null) ? null : keyword.trim();
+        Pageable pageable = PageRequest.of(safePage, PAGE_SIZE);
+
+        return gigRepository
+                .searchByStatusAndFilters(GigStatus.OPEN, categoryId, normalizedKeyword, pageable)
+                .map(GigResponse::from);
     }
 
     private User resolveAuthenticatedUser(Authentication authentication) {
