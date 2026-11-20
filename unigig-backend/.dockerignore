@@ -1,0 +1,39 @@
+# Build outputs & caches
+target/
+build/
+data/
+*.jar
+!/.mvn/wrapper/maven-wrapper.jar
+*.original
+*.log
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Environment & secrets
+.env
+.env.*
+
+# IDE & OS files
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+.apt_generated/
+.springBeans
+.sts4-cache/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+
+# Documentation & tests not needed in production image build
+HELP.md
+CONVENTIONS.md
+README.md
+src/test/

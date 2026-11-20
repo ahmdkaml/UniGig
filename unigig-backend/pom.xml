@@ -155,4 +155,62 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>slim</id>
+			<dependencies>
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<finalName>unigig-backend-slim</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>
+									<groupId>org.postgresql</groupId>
+									<artifactId>postgresql</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>org.flywaydb</groupId>
+									<artifactId>flyway-database-postgresql</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>org.glassfish.jaxb</groupId>
+									<artifactId>jaxb-runtime</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>org.glassfish.jaxb</groupId>
+									<artifactId>jaxb-core</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>org.glassfish.jaxb</groupId>
+									<artifactId>txw2</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>com.sun.istack</groupId>
+									<artifactId>istack-commons-runtime</artifactId>
+								</exclude>
+								<exclude>
+									<groupId>org.apache.tomcat.embed</groupId>
+									<artifactId>tomcat-embed-websocket</artifactId>
+								</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>

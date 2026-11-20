@@ -1,4 +1,5 @@
 spring.application.name=unigig-backend
+server.port=${PORT:8080}
 
 # PostgreSQL (matches docker-compose.yml local defaults)
 spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/unigig}
@@ -11,6 +12,7 @@ spring.jpa.open-in-view=false
 spring.flyway.enabled=true
 spring.flyway.locations=classpath:db/migration
 
-# JWT Settings (used starting in UG-4)
+# JWT & CORS Settings (override via environment variables in staging/production)
 app.jwt.secret=${JWT_SECRET:replace-with-a-256-bit-base64-secret-key-for-local-dev}
 app.jwt.expiration-ms=${JWT_EXPIRATION_MS:86400000}
+app.cors.allowed-origins=${CORS_ALLOWED_ORIGINS:http://localhost:4200}

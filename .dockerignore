@@ -1,0 +1,23 @@
+# Version control
+.git/
+.github/
+.gitignore
+
+# Build & dependency directories
+**/target/
+**/node_modules/
+**/dist/
+**/.angular/
+**/data/
+*.log
+
+# Environment & secrets
+.env
+.env.*
+
+# IDE & OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
