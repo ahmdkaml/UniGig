@@ -1,6 +1,5 @@
 package com.unigig.backend.entity;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
