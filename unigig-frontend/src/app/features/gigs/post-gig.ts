@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { GigService } from '../../core/gigs/gig.service';
+import { GigService } from '../../core/services/gig.service';
 import { Category, GigRequest } from '../../core/models/gig.models';
 import { ApiError } from '../../core/models/api-error.model';
 

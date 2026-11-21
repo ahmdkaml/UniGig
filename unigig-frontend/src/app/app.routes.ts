@@ -9,6 +9,12 @@ export const routes: Routes = [
     component: Home,
   },
   {
+    path: 'marketplace',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./features/marketplace/marketplace.routes').then((m) => m.MARKETPLACE_ROUTES),
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
