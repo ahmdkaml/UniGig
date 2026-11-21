@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CategoryItem, GigResponse, GigSearchParams, PageResponse } from '../models/gig.models';
+import { Category, GigResponse, GigSearchParams, PageResponse } from '../models/gig.models';
 
 @Injectable({ providedIn: 'root' })
 export class GigService {
@@ -23,7 +23,7 @@ export class GigService {
     return this.http.get<PageResponse<GigResponse>>(this.baseUrl, { params: httpParams });
   }
 
-  getCategories(): Observable<CategoryItem[]> {
-    return this.http.get<CategoryItem[]>('/api/categories');
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>('/api/categories');
   }
 }

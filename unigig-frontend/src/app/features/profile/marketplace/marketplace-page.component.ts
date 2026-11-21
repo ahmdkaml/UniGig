@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GigService } from '../../../core/services/gig.service';
-import { CategoryItem, GigResponse } from '../../../core/models/gig.models';
+import { Category, GigResponse } from '../../../core/models/gig.models';
 
 @Component({
   selector: 'app-marketplace-page',
@@ -15,7 +15,7 @@ export class MarketplacePageComponent implements OnInit {
 
   keyword = '';
   selectedCategoryId: number | null = null;
-  categories: CategoryItem[] = [];
+  categories: Category[] = [];
 
   gigs: GigResponse[] = [];
   currentPage = 0;

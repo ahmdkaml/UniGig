@@ -38,3 +38,20 @@ export interface GigResponse {
   clientName: string;
   createdAt: string;
 }
+
+export interface GigSearchParams {
+  keyword?: string;
+  categoryId?: number | null;
+  page?: number;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
