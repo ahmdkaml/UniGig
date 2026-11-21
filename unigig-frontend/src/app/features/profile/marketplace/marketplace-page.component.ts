@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GigService } from '../../core/services/gig.service';
-import { CategoryItem, GigResponse } from '../../core/models/gig.models';
+import { GigService } from '../../../core/services/gig.service';
+import { CategoryItem, GigResponse } from '../../../core/models/gig.models';
 
 @Component({
   selector: 'app-marketplace-page',
