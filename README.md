@@ -88,6 +88,34 @@ npm start
 
 ---
 
+## Seeded Dev Data (smoke testing)
+
+Everyone runs their own local PostgreSQL (`docker compose up -d`) and loads the same test data with the `shared-dev` Spring profile.
+
+**Mac / Linux / Git Bash:**
+```bash
+docker compose up -d
+cd unigig-backend
+export SPRING_PROFILES_ACTIVE=shared-dev
+./mvnw spring-boot:run
+```
+
+**Windows PowerShell:**
+```powershell
+docker compose up -d
+cd unigig-backend
+$env:SPRING_PROFILES_ACTIVE="shared-dev"
+.\mvnw.cmd spring-boot:run
+```
+
+The profile loads `db/dev-seed/R__shared_dev_seed.sql`, a repeatable and idempotent seed that is not loaded by default, in tests, or in CI. To get a clean copy of the data: `docker compose down -v && docker compose up -d`.
+
+**Seeded accounts** (test-only password `Password123!`): `admin@unigig.test` (CLIENT, the quick-login account for smoke testing), `client1@unigig.test` and `client2@unigig.test` (CLIENT), `freelancer1@unigig.test` and `freelancer2@unigig.test` (FREELANCER). The seed also contains 14 OPEN gigs (more than one page) plus IN_PROGRESS, COMPLETED and CANCELED gigs that must not appear in the marketplace.
+
+> Never add real data or real credentials to the seed file.
+
+---
+
 ## Architecture Boundaries
 
 ### Backend (`com.unigig.backend`)
